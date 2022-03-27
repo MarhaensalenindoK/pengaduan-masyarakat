@@ -14,7 +14,11 @@
         <div class="navbar-right">
             <div id="navbar-menu">
                 <ul class="nav navbar-nav">
+                    @if (Route::current()->uri !== 'masyarakat/dashboard')
                     <li><a href="@if(Auth::check() === true) {{ url('/logout') }} @else {{ url('/login') }} @endif" class="icon-menu"><i class="icon-power"></i></a></li>
+                    @else
+                    <li><a href="javascript:void(0)" class="icon-menu"><i class="icon-power"></i></a></li>
+                    @endif
                 </ul>
             </div>
         </div>

@@ -3,28 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class Masyarakat extends Model
 {
-    use HasFactory, Notifiable;
-
-    const ADMIN = 'ADMIN';
-    const PETUGAS = 'PETUGAS';
-    const MASYARAKAT = 'MASYARAKAT';
-
+    use HasFactory;
     public $incrementing = false;
 
     protected $fillable = [
         'id',
         'name',
+        'nik',
         'username',
         'password',
         'telp',
-        'role',
         'status',
         'created_at',
         'update_at',
     ];
+
+    public function pengaduan() {
+        return $this->hasMany(Pengaduan::class, 'nik', 'nik');
+    }
 }

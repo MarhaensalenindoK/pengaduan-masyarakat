@@ -29,84 +29,54 @@ Route::get('/{clinicId}/detail-clinic', [Controllers\LandingPageController::clas
 
 // Auth
 Route::get('/login', [LoginController::class, 'check'])->name('login');
+Route::get('/register', [LoginController::class, 'registerView'])->name('register');
 
 Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('auth');
+Route::post('/registration', [LoginController::class, 'registration'])->name('registration');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('reset-password', [LoginController::class, 'resetPassword'])->name('resetPassword');
-
-
-Route::group(['middleware' => ['auth', 'role:SUPERADMIN']], function(){
-    Route::get('/dashboard', [Controllers\SuperAdminController::class, 'index'])->name('index');
-    Route::get('/clinic-management', [Controllers\SuperAdminController::class, 'clinicManagement'])->name('clinicManagement');
-    Route::get('/account-management', [Controllers\SuperAdminController::class, 'accountManagement'])->name('accountManagement');
-
-    Route::prefix('database')->group(function () {
-        Route::get('/superadmin', [Controllers\SuperAdminController::class, 'getSuperAdmin']);
-        Route::post('/user/reset-password', [Controllers\SuperAdminController::class, 'resetPassword']);
-        Route::get('/user', [Controllers\SuperAdminController::class, 'getUser']);
-        Route::post('/user', [Controllers\SuperAdminController::class, 'createAccount']);
-        Route::patch('/user', [Controllers\SuperAdminController::class, 'updateAccount']);
-        Route::delete('/user', [Controllers\SuperAdminController::class, 'deleteAccount']);
-
-        Route::get('/clinic', [Controllers\SuperAdminController::class, 'getClinic']);
-        Route::post('/clinic', [Controllers\SuperAdminController::class, 'createClinic']);
-        Route::delete('/clinic', [Controllers\SuperAdminController::class, 'deleteClinic']);
-        Route::post('/clinic/update', [Controllers\SuperAdminController::class, 'updateClinic']);
-    });
+Route::prefix('masyarakat')->group(function () {
+    Route::get('/dashboard', [Controllers\Masyarakat\DashboardController::class, 'index']);
+    Route::post('/pengaduan', [Controllers\Masyarakat\DashboardController::class, 'createPengaduan']);
 });
 
 Route::group(['middleware' => ['auth', 'role:ADMIN'], 'prefix' => 'admin'], function(){
     Route::get('/dashboard', [Controllers\Admin\DashboardController::class, 'index']);
-    Route::get('/account-management', [Controllers\Admin\ManagementAccountController::class, 'index']);
+    Route::get('/account-management', [Controllers\Admin\AccountManagementController::class, 'index']);
+    Route::get('/masyarakat-management', [Controllers\Admin\MasyarakatManagementController::class, 'index']);
 
     Route::prefix('database')->group(function () {
-        Route::get('/users', [Controllers\Admin\ManagementAccountController::class, 'getUsers']);
-        Route::post('/user/reset-password', [Controllers\Admin\ManagementAccountController::class, 'resetPassword']);
-        Route::post('/user', [Controllers\Admin\ManagementAccountController::class, 'createAccount']);
-        Route::patch('/user', [Controllers\Admin\ManagementAccountController::class, 'updateAccount']);
-        Route::delete('/user', [Controllers\Admin\ManagementAccountController::class, 'deleteAccount']);
+        Route::get('/users', [Controllers\Admin\AccountManagementController::class, 'getUser']);
+        Route::post('/user', [Controllers\Admin\AccountManagementController::class, 'createAccount']);
+        Route::patch('/user', [Controllers\Admin\AccountManagementController::class, 'updateAccount']);
+        Route::delete('/user', [Controllers\Admin\AccountManagementController::class, 'deleteAccount']);
+        Route::post('/user/reset-password', [Controllers\Admin\AccountManagementController::class, 'resetPassword']);
+
+        Route::get('/masyarakat', [Controllers\Admin\MasyarakatManagementController::class, 'getMasyarakat']);
+        Route::post('/masyarakat', [Controllers\Admin\MasyarakatManagementController::class, 'createMasyarakat']);
+        Route::patch('/masyarakat', [Controllers\Admin\MasyarakatManagementController::class, 'updateMasyarakat']);
+        Route::delete('/masyarakat', [Controllers\Admin\MasyarakatManagementController::class, 'deleteMasyarakat']);
+        Route::post('/masyarakat/reset-password', [Controllers\Admin\MasyarakatManagementController::class, 'resetPassword']);
+
+        Route::get('/pengaduan', [Controllers\Admin\DashboardController::class, 'getPengaduan']);
     });
+
+    Route::patch('/pengaduan', [Controllers\Admin\DashboardController::class, 'updatePengaduan']);
 });
 
-Route::group(['middleware' => ['auth', 'role:DOCTOR'], 'prefix' => 'doctor'], function(){
-    Route::get('/dashboard', [Controllers\Doctor\DashboardController::class, 'index']);
-    Route::prefix('database')->group(function () {
-        Route::post('/queue', [Controllers\Doctor\DashboardController::class, 'createQueue']);
-        Route::delete('/queue', [Controllers\Doctor\QueuesController::class, 'deleteQueue']);
-    });
-
-    Route::prefix('medical-history')->group(function () {
-        Route::get('/queues', [Controllers\Doctor\QueuesController::class, 'index']);
-        Route::delete('/action', [Controllers\Doctor\QueuesController::class, 'deleteAction']);
-        Route::patch('/', [Controllers\Doctor\QueuesController::class, 'updateMedicalHistory']);
-    });
-});
-
-Route::group(['middleware' => ['auth', 'role:RECEPTIONIST'], 'prefix' => 'receptionist'], function(){
-    Route::get('/dashboard', [Controllers\Receptionist\DashboardController::class, 'index']);
-    Route::get('/patient-management', [Controllers\Receptionist\PatientManagementController::class, 'index']);
-
-    Route::get('/queue-management', [Controllers\Receptionist\QueueManagementController::class, 'indexManagement']);
-    Route::get('/add-queue-page', [Controllers\Receptionist\QueueManagementController::class, 'indexQueue']);
-
-    Route::get('/medicine-management', [Controllers\Receptionist\MedicineManagementController::class, 'index']);
+Route::group(['middleware' => ['auth', 'role:PETUGAS'], 'prefix' => 'petugas'], function(){
+    Route::get('/dashboard', [Controllers\Petugas\DashboardController::class, 'index']);
+    Route::get('/account-masyarakat', [Controllers\Petugas\MasyarakatManagementController::class, 'index']);
 
     Route::prefix('database')->group(function () {
-        Route::post('/patient', [Controllers\Receptionist\PatientManagementController::class, 'createPatient']);
-        Route::patch('/patient', [Controllers\Receptionist\PatientManagementController::class, 'updatePatient']);
-        Route::delete('/patient', [Controllers\Receptionist\PatientManagementController::class, 'deletePatient']);
+        Route::get('/masyarakat', [Controllers\Petugas\MasyarakatManagementController::class, 'getMasyarakat']);
+        Route::post('/masyarakat', [Controllers\Petugas\MasyarakatManagementController::class, 'createMasyarakat']);
+        Route::patch('/masyarakat', [Controllers\Petugas\MasyarakatManagementController::class, 'updateMasyarakat']);
+        Route::delete('/masyarakat', [Controllers\Petugas\MasyarakatManagementController::class, 'deleteMasyarakat']);
+        Route::post('/masyarakat/reset-password', [Controllers\Petugas\MasyarakatManagementController::class, 'resetPassword']);
 
-        Route::post('/medicine', [Controllers\Receptionist\MedicineManagementController::class, 'createMedicine']);
-        Route::patch('/medicine', [Controllers\Receptionist\MedicineManagementController::class, 'updateMedicine']);
-        Route::delete('/medicine', [Controllers\Receptionist\MedicineManagementController::class, 'deleteMedicine']);
-
-        Route::post('/queue', [Controllers\Receptionist\QueueManagementController::class, 'createQueue']);
-        Route::patch('/queue', [Controllers\Receptionist\QueueManagementController::class, 'updateQueue']);
-        Route::delete('/queue', [Controllers\Receptionist\QueueManagementController::class, 'deleteQueue']);
+        Route::get('/pengaduan', [Controllers\Admin\DashboardController::class, 'getPengaduan']);
     });
-});
 
-Route::group(['middleware' => ['auth', 'role:PATIENT'], 'prefix' => 'patient'], function(){
-    Route::get('/dashboard', [Controllers\Patient\DashboardController::class, 'index']);
+    Route::patch('/pengaduan', [Controllers\Admin\DashboardController::class, 'updatePengaduan']);
 });
-

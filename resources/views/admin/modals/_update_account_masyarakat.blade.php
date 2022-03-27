@@ -36,6 +36,10 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>NIK</label>
+                        <input type="number" class="form-control" name="nik" required>
+                    </div>
+                    <div class="form-group">
                         <label>Nama</label>
                         <input type="text" class="form-control" name="name" required>
                     </div>
@@ -46,16 +50,6 @@
                     <div class="form-group">
                         <label>Telp</label>
                         <input type="text" class="form-control" name="telp" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Role</label>
-                        <div class="input-group mb-3">
-                            <select class="custom-select" name="role">
-                                <option selected disabled>Role</option>
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="PETUGAS">PETUGAS</option>
-                            </select>
-                        </div>
                     </div>
                 </form>
             </div>

@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-<title>Poliklinik</title>
-<link rel="icon" href="{{ asset('images/logo-poliklinik.png') }}" type="image/x-icon">
+<title>Pra Ukk</title>
+<link rel="icon" href="{{ asset('images/login-img.png') }}" type="image/x-icon">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +47,9 @@
 <div id="wrapper">
     @include('components.header')
     @include('components.sidebar')
+    @if (Route::current()->uri !== 'masyarakat/dashboard')
     @include('layout._change_password')
+    @endif
 
     <div id="main-content">
         <div class="container-fluid">

@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -42,21 +41,46 @@
                 <div class="login-img">
                     <img class="img-fluid" src="{{ asset('images/landingpage/hospital.png') }}" />
                 </div>
-                <form class="form-auth-small" action="{{route('auth')}}" method="post">
+                <form class="form-auth-small" action="{{route('registration')}}" method="post">
                     {{ csrf_field() }}
                     <div class="mb-3">
-                        <p class="lead">Masuk ke akun kamu</p>
+                        <p class="lead">Daftarkan Akunmu</p>
                     </div>
                     <div class="form-group">
-                        <label for="signin-email" class="control-label sr-only">Username</label>
-                        <input type="text" name="username" class="form-control round" id="signin-username" value="" placeholder="Username" required>
+                        <label for="register-email" class="control-label sr-only">Username</label>
+                        <input type="text" name="username" class="form-control round" id="register-username" value="" placeholder="Username" required>
                     </div>
                     <div class="form-group">
-                        <label for="signin-password" class="control-label sr-only">Password</label>
-                        <input type="password" name="password" class="form-control round" id="signin-password" value="" placeholder="Password" required>
+                        <label for="register-password" class="control-label sr-only">Password</label>
+                        <input type="password" name="password" class="form-control round" id="register-password" value="" placeholder="Password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-round btn-block">MASUK</button>
-                    <a href="/register">belum punya akun?</a>
+                    <div class="form-group">
+                        <label for="register-password" class="control-label sr-only">Confirm Password</label>
+                        <input type="password" name="confirm_password" class="form-control round" id="register-password" value="" placeholder="Confirm Password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label sr-only">Name</label>
+                        <input type="text" name="name" class="form-control round" id="name" value="" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nik" class="control-label sr-only">NIK</label>
+                        <input type="text" name="nik" class="form-control round" id="nik" value="" placeholder="NIK" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-telp" class="control-label sr-only">No. Telp</label>
+                        <input type="text" name="telp" class="form-control round" id="register-telp" value="" placeholder="+62 .." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <div class="input-group mb-3">
+                            <select class="form-control" name="role">
+                                <option selected disabled>Role</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-round btn-block">Daftar</button>
+                    <a href="/login">sudah punya akun?</a>
                 </form>
                 <div class="pattern">
                     <span class="red"></span>
@@ -85,10 +109,10 @@
 </script>
 @endif
 
-@if (Session::has('success'))
+@if (Session::has('message'))
 <script>
-    let message = "{{ Session::get('success') }}"
-     swal("Berhasil!", message, "success");
+    let message = "{{ Session::get('message') }}"
+     swal("Error!", message, "error");
 </script>
 @endif
 </body>

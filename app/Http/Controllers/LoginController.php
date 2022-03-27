@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Service\Database\UserService;
+use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,7 @@ class LoginController extends Controller
         }
 
         $role = strval(Auth::user()->role);
-        if ($role === 'SUPERADMIN') return redirect('dashboard');
+
         $route = strtolower($role) . '/dashboard';
         return redirect($route);
     }
@@ -30,12 +31,9 @@ class LoginController extends Controller
         if (Auth::attempt(($credentials + ['status' => true]))){
             $user = Auth::user();
 
-            if ($user->role === 'SUPERADMIN') {
-                return redirect('dashboard');
-            }
-
             return redirect( strtolower($user->role) . '/dashboard');
         }
+
         return redirect('login')->with('error', true);
     }
 
@@ -57,10 +55,38 @@ class LoginController extends Controller
 
         $DBuser->update($userId, $payload);
 
-        if (Auth::user()->role === 'SUPERADMIN') {
-            return redirect('dashboard');
+        return redirect( strtolower(Auth::user()->role) . '/dashboard');
+    }
+
+    public function registerView() {
+
+        return view('authentication.registeration');
+    }
+
+    public function registration(Request $request) {
+        $DBUser = new UserService;
+        $faker = Factory::create();
+        $username = strtolower($request->username . $faker->numerify('####'));
+        $password = $request->password;
+        $confrim = $request->confirm_password;
+        if ($password !== $confrim) {
+            return redirect('register')
+            ->with('message', 'Konfirmasi password anda !');
+        }
+        $create = $DBUser->create([
+            'name' => $request->name,
+            'username' => $username,
+            'password' => $request->password,
+            'telp' => $request->telp,
+            'nik' => $request->nik,
+            'role' => $request->role,
+            'status' => 1
+        ]);
+
+        if ($create['id']) {
+            return redirect('login')->with('success', 'Berhasil membuat akun ' . $request->name . ' !, mohon catat username anda berikut ini ' . $username . ' !');
         }
 
-        return redirect( strtolower(Auth::user()->role) . '/dashboard');
+        return redirect('register')->with('message', 'Gagal membuat akun ' . $request->name . ' !');
     }
 }

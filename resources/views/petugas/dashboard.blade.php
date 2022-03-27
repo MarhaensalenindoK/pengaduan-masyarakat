@@ -16,9 +16,8 @@
     <li class="active open">
         <a href="#myPage" class="has-arrow"><i class="icon-home"></i><span>My Page</span></a>
         <ul>
-            <li class="active"><a href="{{ url('admin/dashboard') }}">Pengaduan Masyarakat</a></li>
-            <li><a href="{{ url('admin/account-management') }}">Manajemen Akun</a></li>
-            <li><a href="{{ url('admin/masyarakat-management') }}">Manajemen Masyarakat</a></li>
+            <li class="active"><a href="{{ url('petugas/dashboard') }}">Pengaduan Masyarakat</a></li>
+            <li><a href="{{ url('petugas/account-masyarakat') }}">Manajemen Masyarakat</a></li>
         </ul>
     </li>
 @endsection
@@ -63,7 +62,13 @@
             </div>
         </div>
     </div>
-
+@if (Auth::user()->role === 'petugas')
+<div class="col-lg-12 col-md-12">
+    <button class="btn btn-primary" type="button">
+        Cetak Data Pengaduan
+    </button>
+</div>
+@endif
     <div class="col-lg-12 col-md-12">
         <div class="table-responsive">
             <table class="table table-hover table-custom spacing5" id="table_pengaduan">
@@ -84,7 +89,7 @@
         </div>
     </div>
 </div>
-@include('admin.modals._update_pengaduan')
+@include('petugas.modals._update_pengaduan')
 @endsection
 
 @section('script')
@@ -115,7 +120,7 @@
     }
 
     function getPengaduan() {
-        let url = `{{ url('admin/database/pengaduan') }}`
+        let url = `{{ url('petugas/database/pengaduan') }}`
 
         $.ajax({
             type: "get",
@@ -193,7 +198,7 @@
     }
 
     function updatePengaduan() {
-        let url = `{{ url('admin/pengaduan') }}`
+        let url = `{{ url('petugas/pengaduan') }}`
         let pengaduan_id = $("#updatePengaduan").find(`input[name=pengaduan_id][type=hidden]`).val()
         let status = $("#updatePengaduan").find(`input[name=status][type=radio]:checked`).val()
 
@@ -206,6 +211,7 @@
             },
             success: function (response) {
                 swal('success!', 'Berhasil mengubah pengaduan', 'success')
+                $("#updatePengaduan").modal('hide')
                 getPengaduan()
             },
             error: function (e) {
