@@ -19,4 +19,8 @@ class Pengaduan extends Model
         'created_at',
         'update_at',
     ];
+
+    public function masyarakat() {
+        return $this->hasOne(Masyarakat::class, 'nik', 'nik');
+    }
 }

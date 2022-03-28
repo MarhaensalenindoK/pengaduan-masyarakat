@@ -33,6 +33,32 @@
             </div>
         </div>
 
+        <div class="row-clearfix mx-5 mt-6 text-center">
+            <div class="card">
+                <div class="card-title text-info">
+                    <h5>Pengaduan</h5>
+                </div>
+                <div class="body border-radius-15-important">
+
+                    <div class="row slider h-50 mx-auto" id="renderPengaduan">
+                        @foreach ($dataPengaduan['data'] as $pengaduan)
+                            <div class="mx-2 cursor-pointer">
+                                <div class="card">
+                                    <div class="body text-center" style="min-height: 23rem;">
+                                        @if ($pengaduan['photo'] !== null)
+                                        <img width="50" src="{{ asset('images/' . $pengaduan['photo']) }}" class="card-img-top" alt="{{ asset('images/login-img.png') }}">
+                                        @endif
+                                        <p class="card-text text-truncate">{{ $pengaduan['content'] }}</p>
+                                        <a href="javascript:void(0)" class="badge badge-primary">{{ $pengaduan['masyarakat']['name'] ?? '-' }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row-clearfix mx-5 mt-5 text-center">
             <div class="card">
                 <div class="body border-radius-15-important bg-info">
@@ -142,7 +168,7 @@
     });
 
 
-    $('#renderClinic').slick({
+    $('#renderPengaduan').slick({
         dots: true,
         infinite: true,
         speed: 300,

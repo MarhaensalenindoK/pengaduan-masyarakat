@@ -64,6 +64,48 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+            <div class="header">
+                <h2>List Pengaduan Anda</h2>
+            </div>
+            <div class="body">
+                <form>
+                    @csrf
+                    <div class="form-group">
+                        <h6>Silahkan isi NIK</h6>
+                        <p>Mengambil laporan berdasarkan NIK</p>
+                        <br>
+                        <label>NIK</label>
+                        <input type="text" id="nik_masyarakat" class="form-control" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="showPengaduan()">Tampilkan Pengaduan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-hover table-custom spacing5" id="table_pengaduan" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 20px;">#</th>
+                        <th>nik</th>
+                        <th>name</th>
+                        <th>telp</th>
+                        <th>Laporan</th>
+                        <th>Foto</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="renderPengaduan">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     @if (Session::has('dataPengaduan'))
         @php
             $dataPengaduan = Session::get('dataPengaduan')
@@ -71,7 +113,7 @@
 
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="table-responsive">
-                <table class="table table-hover table-custom spacing5"">
+                <table class="table table-hover table-custom spacing5">
                     <thead>
                         <tr>
                             <th style="width: 20px;">#</th>
@@ -80,6 +122,7 @@
                             <th>telp</th>
                             <th>Laporan</th>
                             <th>Foto</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,9 +132,29 @@
                             <td>{{ $dataPengaduan['nik'] }}</td>
                             <td>{{ $dataPengaduan['name'] }}</td>
                             <td>{{ $dataPengaduan['telp'] }}</td>
-                            <td>{{ $pengaduan['content'] }}</td>
                             <td>
+                                <div class="text-wrap" style="width:23rem">
+                                    {{ $pengaduan['content'] }}
+                                </div>
+                            </td>
+                            <td>
+                                @if ($pengaduan['photo'] !== null)
                                 <img width="60" src="{{ asset('images/'. $pengaduan['photo']) }}" alt="-">
+                                @else
+                                -
+                                @endif
+                            </td>
+                            <td>
+                                @switch($pengaduan['status'])
+                                    @case('todo')
+                                    <span class="badge badge-primary">Sedang dilakukan</span>
+                                        @break
+                                    @case('inprogress')
+                                    <span class="badge badge-warning">Sedang berlangsung</span>
+                                        @break
+                                    @default
+                                    <span class="badge badge-success">Selesai</span>
+                                @endswitch
                             </td>
                         </tr>
                         @endforeach
@@ -111,6 +174,72 @@
 </script>
 @endif
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
+    let dataPengaduan = {}
+
+    function showPengaduan() {
+        let nik = $("#nik_masyarakat").val()
+
+        $.ajax({
+            type: "get",
+            url: "{{ url('masyarakat/pengaduan') }}",
+            data: {
+                nik
+            },
+            success: function (response) {
+                renderPengaduan(response.data)
+            },
+            error: function (e) {
+                swal('error!', 'Gagal mengambil data pengaduan Anda!', 'error')
+            }
+        });
+    }
+
+    function renderPengaduan(data) {
+        let html = ``
+        let no = 1
+        $.each(data, function (key, pengaduan) {
+            html += `
+            <tr>
+                <td>${no++}</td>
+                <td>${pengaduan.masyarakat.nik}</td>
+                <td>${pengaduan.masyarakat.name}</td>
+                <td>${pengaduan.masyarakat.telp}</td>
+                <td>
+                    <div class="text-wrap" style="width:23rem">
+                        ${pengaduan.content}
+                    </div>
+                </td>
+                <td>
+                    ${pengaduan.photo !== null ? `<img width="60" src="/images/${pengaduan.photo}" alt="-">` : '-'}
+                </td>
+                <td>
+                `
+                switch (pengaduan.status) {
+                    case 'todo':
+                    html += `<span class="badge badge-primary">Sedang dilakukan</span>`
+
+                        break;
+                    case 'inprogress':
+                    html += `<span class="badge badge-warning">Sedang berlangsung</span>`
+                        break;
+                    default:
+                        html += `<span class="badge badge-success">Selesai</span>`
+                        break;
+                }
+            html += `
+                </td>
+            </tr>
+            `
+        });
+
+        $("#renderPengaduan").html(html);
+        $("#table_pengaduan").show('slow');
+    }
 </script>
 @endsection

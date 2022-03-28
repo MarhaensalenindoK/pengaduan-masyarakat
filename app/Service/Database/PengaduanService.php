@@ -3,8 +3,6 @@
 namespace App\Service\Database;
 
 use App\Models\Pengaduan;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Validation\Rule;
@@ -17,6 +15,7 @@ class PengaduanService {
         $per_page = $filter['per_page'] ?? 999;
         $page = $filter['page'] ?? 1;
         $status = $filter['status'] ?? null;
+        $nik = $filter['nik'] ?? null;
 
         $query = Pengaduan::orderBy('created_at', $orderBy);
 
@@ -24,6 +23,12 @@ class PengaduanService {
             $status = strtolower($status);
             $query->where('status', $status);
         }
+
+        if ($nik !== null) {
+            $query->where('nik', $nik);
+        }
+
+        $query->with('masyarakat');
 
         $pengaduan = $query->paginate($per_page, ['*'], 'page', $page);
 
@@ -58,7 +63,7 @@ class PengaduanService {
 
     public function destroy($pengaduanId)
     {
-        User::findOrFail($pengaduanId)->delete();
+        Pengaduan::findOrFail($pengaduanId)->delete();
 
         return true;
     }

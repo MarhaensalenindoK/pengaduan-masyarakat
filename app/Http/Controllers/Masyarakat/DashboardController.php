@@ -15,6 +15,31 @@ class DashboardController extends Controller
         return view('masyarakat.dashboard');
     }
 
+    public function getPengaduan(Request $request) {
+        $DBpengaduan = new PengaduanService;
+
+        $dataPengaduan = $DBpengaduan->index(['nik' => $request->nik]);
+
+        $collectPengaduan = collect($dataPengaduan['data']);
+        $totalTodo = $collectPengaduan->sum(function ($pengaduan) {
+            return $pengaduan['status'] === 'todo';
+        });
+
+        $totalInprogress = $collectPengaduan->sum(function ($pengaduan) {
+            return $pengaduan['status'] === 'inprogress';
+        });
+
+        $totalDone = $collectPengaduan->sum(function ($pengaduan) {
+            return $pengaduan['status'] === 'done';
+        });
+
+        $dataPengaduan['totalTodo'] = $totalTodo;
+        $dataPengaduan['totalInprogress'] = $totalInprogress;
+        $dataPengaduan['totalDone'] = $totalDone;
+
+        return response()->json($dataPengaduan);
+    }
+
     public function createPengaduan(Request $request)
     {
         $DBpengaduan = new PengaduanService;

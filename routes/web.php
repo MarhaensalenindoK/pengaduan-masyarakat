@@ -37,6 +37,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('reset-password', [LoginController::class, 'resetPassword'])->name('resetPassword');
 Route::prefix('masyarakat')->group(function () {
     Route::get('/dashboard', [Controllers\Masyarakat\DashboardController::class, 'index']);
+    Route::get('/pengaduan', [Controllers\Masyarakat\DashboardController::class, 'getPengaduan']);
     Route::post('/pengaduan', [Controllers\Masyarakat\DashboardController::class, 'createPengaduan']);
 });
 
