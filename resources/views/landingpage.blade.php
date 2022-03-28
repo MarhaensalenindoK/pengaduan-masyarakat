@@ -46,7 +46,7 @@
                                 <div class="card">
                                     <div class="body text-center" style="min-height: 23rem;">
                                         @if ($pengaduan['photo'] !== null)
-                                        <img width="50" src="{{ asset('images/' . $pengaduan['photo']) }}" class="card-img-top" alt="{{ asset('images/login-img.png') }}">
+                                        <img width="50" style="max-height: 16rem; max-width: 15rem;" src="{{ asset('images/' . $pengaduan['photo']) }}" class="card-img-top" alt="{{ asset('images/login-img.png') }}">
                                         @endif
                                         <p class="card-text text-truncate">{{ $pengaduan['content'] }}</p>
                                         <a href="javascript:void(0)" class="badge badge-primary">{{ $pengaduan['masyarakat']['name'] ?? '-' }}</a>
